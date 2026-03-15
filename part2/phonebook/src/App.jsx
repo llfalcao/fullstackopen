@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import Filter from './Filter';
+import PersonForm from './PersonForm';
+import Persons from './Persons';
 
 const App = () => {
   const [persons, setPersons] = useState([
@@ -9,11 +12,11 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
-  const [searchInput, setSearchInput] = useState('');
+  const [query, setQuery] = useState('');
 
   const handleNameChange = (event) => setNewName(event.target.value);
   const handleNumberChange = (event) => setNewNumber(event.target.value);
-  const handleSearchInputChange = (event) => setSearchInput(event.target.value);
+  const handleSearchInputChange = (event) => setQuery(event.target.value);
 
   const addPerson = (event) => {
     event.preventDefault();
@@ -29,46 +32,19 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <label htmlFor='search'>
-        filter shown with{' '}
-        <input
-          id='search'
-          value={searchInput}
-          onChange={handleSearchInputChange}
-        />
-      </label>
-      <h2>add a new</h2>
-      <form onSubmit={addPerson}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label htmlFor='name'>
-            name:{' '}
-            <input id='name' value={newName} onChange={handleNameChange} />
-          </label>
-          <label htmlFor='number'>
-            number:{' '}
-            <input
-              id='number'
-              value={newNumber}
-              onChange={handleNumberChange}
-            />
-          </label>
-        </div>
-        <div>
-          <button type='submit'>add</button>
-        </div>
-      </form>
+      <Filter query={query} onChange={handleSearchInputChange} />
+
+      <h2>Add a new</h2>
+      <PersonForm
+        name={newName}
+        onNameChange={handleNameChange}
+        number={newNumber}
+        onNumberChange={handleNumberChange}
+        addPerson={addPerson}
+      />
+
       <h2>Numbers</h2>
-      <ul>
-        {persons
-          .filter((person) =>
-            person.name.toLowerCase().includes(searchInput.toLowerCase()),
-          )
-          .map((person) => (
-            <li key={person.id}>
-              {person.name} {person.number}
-            </li>
-          ))}
-      </ul>
+      <Persons persons={persons} query={query} />
     </div>
   );
 };
